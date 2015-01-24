@@ -87,38 +87,50 @@ public class Translator {
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
+			if(verifyInput(r,s1,s2))
 			return new AddInstruction(label, r, s1, s2);
 		case "lin":
 			r = scanInt();
 			x = scanInt();
+			if(verifyInput(r,0,0))
 			return new LinInstruction(label, r, x);
 		case "sub":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
+			if(verifyInput(r,s1,s2))
 			return new SubInstruction(label, r, s1, s2);
 		case "mul":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
+			if(verifyInput(r,s1,s2))
 			return new MulInstruction(label, r, s1, s2);
 		case "div":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
+			if(verifyInput(r,s1,s2))
 			return new DivInstruction(label, r, s1, s2);
 		case "out":
 			s1 = scanInt();
+			if(verifyInput(0,s1,0))
 			return new OutInstruction(label, s1);
 		case "bnz":
 			s1 = scanInt();
-			s2 = scanInt();
-			return new BnzInstruction(label, s1, s2);
+			x = scanInt();
+			if(verifyInput(0,s1,0))
+			return new BnzInstruction(label, s1, x);
 		}
 
 		// You will have to write code here for the other instructions.
 
 		return null;
+	}
+	
+	private boolean verifyInput(int r, int s1, int s2){
+		if(r>32||s1>32||s2>32) return false;
+		return true;
 	}
 
 	/*
