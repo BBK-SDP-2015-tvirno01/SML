@@ -1,9 +1,10 @@
 package sml;
 
 /**
- * This class ....
+ * This class contains the methods specific to the SML LIN instruction
  * 
  * @author someone
+ * @author tvirno01
  */
 
 public class LinInstruction extends Instruction {
@@ -15,7 +16,7 @@ public class LinInstruction extends Instruction {
 	}
 
 	public LinInstruction(String label, int register, int value) {
-		super(label, "lin");
+		this(label, "lin");
 		this.register = register;
 		this.value = value;
 

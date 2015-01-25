@@ -47,8 +47,9 @@ public class Translator {
 			while (line != null) {
 				// Store the label in label
 				String label = scan();
-
-				if (label.length() > 0) {
+				
+				//ignore lines duplicating earlier labels and lines with no instruction			
+				if (label.length() > 0 && labels.indexOf(label)==-1) {
 					Instruction ins = getInstruction(label);
 					if (ins != null) {
 						labels.addLabel(label);
@@ -77,6 +78,7 @@ public class Translator {
 		int s2;
 		int r;
 		int x;
+		String L2
 
 		if (line.equals(""))
 			return null;
@@ -87,48 +89,59 @@ public class Translator {
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2))
-			return new AddInstruction(label, r, s1, s2);
+			if(verifyInputRegisters(r,s1,s2)){
+				return new AddInstruction(label, r, s1, s2);
+			}
 		case "lin":
 			r = scanInt();
 			x = scanInt();
-			if(verifyInputRegisters(r))
-			return new LinInstruction(label, r, x);
+			if(verifyInputRegisters(r)){
+				return new LinInstruction(label, r, x);
+			}
 		case "sub":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2))
-			return new SubInstruction(label, r, s1, s2);
+			if(verifyInputRegisters(r,s1,s2)){
+				return new SubInstruction(label, r, s1, s2);
+			}
 		case "mul":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2))
-			return new MulInstruction(label, r, s1, s2);
+			if(verifyInputRegisters(r,s1,s2)){
+				return new MulInstruction(label, r, s1, s2);
+			}
 		case "div":
 			r = scanInt();
 			s1 = scanInt();
 			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2))
-			return new DivInstruction(label, r, s1, s2);
+			if(verifyInputRegisters(r,s1,s2)){
+				return new DivInstruction(label, r, s1, s2);
+			}
 		case "out":
 			s1 = scanInt();
-			if(verifyInputRegisters(s1))
-			return new OutInstruction(label, s1);
+			if(verifyInputRegisters(s1)){
+				return new OutInstruction(label, s1);
+			}
 		case "bnz":
 			s1 = scanInt();
-			x = scanInt();
-			if(verifyInputRegisters(s1))
-			return new BnzInstruction(label, s1, x);
+			L2 = scan();
+			if(verifyInputRegisters(s1)){
+				return new BnzInstruction(label, s1, L2);
+			}
 		}
 
 		return null;
 	}
 	
-	private boolean verifyInputRegisters(int... inputs){
+	/*
+	 * Validate reigster number inputs
+	 * There are only 32 registers hence given register numbers should be <=31
+	 */
+	private static boolean verifyInputRegisters(int... inputs){
 		for(int i : inputs){
-		if(i>NUMBEROFREGISTERS) return false;
+		if(i>31) return false;
 		}
 		return true;
 	}

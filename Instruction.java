@@ -14,8 +14,8 @@ public abstract class Instruction {
 	// (op must be an operation of the language)
 
 	public Instruction(String l, String op) {
-		this.label = l;
-		this.opcode = op;
+			this.label = l;
+			this.opcode = op;
 	}
 
 	// = the representation "label: opcode" of this Instruction
