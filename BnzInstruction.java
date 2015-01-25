@@ -9,14 +9,14 @@ package sml;
 
 public class BnzInstruction extends Instruction {
 	private int register;
-	private int nextLabel;
+	private String nextLabel;
 
 	public BnzInstruction(String label, String opcode) {
 		super(label, opcode);
 	}
 
-	public BnzInstruction(String label, int register, int nextLabel) {
-		super(label, "bnz");
+	public BnzInstruction(String label, int register, String nextLabel) {
+		this(label, "bnz");
 		this.register = register;
 		this.nextLabel = nextLabel;
 

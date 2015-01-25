@@ -16,7 +16,7 @@ public class OutInstruction extends Instruction {
 	}
 
 	public OutInstruction(String label, int register) {
-		super(label, "out");
+		this(label, "out");
 		this.register = register;
 	}
 
