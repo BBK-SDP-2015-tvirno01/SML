@@ -1,6 +1,8 @@
 package sml;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.Class;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -84,6 +86,34 @@ public class Translator {
 			return null;
 
 		String ins = scan();
+		
+		//use reflection to instantiate instruction subclass as indicated by the ins scanned which is then returned
+		try{
+			Class c = Class.forName(ins.substring(0,1).toUpperCase() + ins.substring(1).toLowerCase() + "Instruction") throws ClassNotFoundException;
+			ArrayList<Object> params;
+			ArrayList<Class> ptypes;
+			params.add(label);
+			ptypes.add(String.class);
+			String scn;
+		
+			do{
+				try{
+					scn = scan();
+					params.add(Integer.parseInt(scn));
+					ptypes.add(int.class);
+				}catch(NumberFormatException ex){
+					params.add(scn);
+					ptypes.add(String.class);
+				}
+			}while(scn!="");
+		
+			Constructor cons = c.getConstructors(ptypes.toArray());
+			return (c) cons.newInstance(params.toArray());
+		}catch(ClassNotFoundException ex){
+			System.out.println(ex.getMessage());
+			return null;
+		}
+		
 		switch (ins) {
 		case "add":
 			r = scanInt();
