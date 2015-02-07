@@ -89,7 +89,8 @@ public class Translator {
 		
 		//use reflection to instantiate instruction subclass as indicated by the ins scanned which is then returned
 		try{
-			Class c = Class.forName(ins.substring(0,1).toUpperCase() + ins.substring(1).toLowerCase() + "Instruction") throws ClassNotFoundException;
+			String insformat = "sml." + ins.substring(0,1).toUpperCase() + ins.substring(1).toLowerCase() + "Instruction";
+			Class c = Class.forName(insformat);
 			ArrayList<Object> params;
 			ArrayList<Class> ptypes;
 			params.add(label);
@@ -171,7 +172,8 @@ public class Translator {
 	 */
 	private static boolean verifyInputRegisters(int... inputs){
 		for(int i : inputs){
-		if(i>31) return false;
+		Registers r = new Registers();
+		if(i>r.getRegisters().length) return false;
 		}
 		return true;
 	}
