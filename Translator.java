@@ -80,7 +80,7 @@ public class Translator {
 		int s2;
 		int r;
 		int x;
-		String L2
+		String L2;
 
 		if (line.equals(""))
 			return null;

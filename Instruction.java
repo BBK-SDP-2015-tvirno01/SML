@@ -16,7 +16,6 @@ public abstract class Instruction {
 	public Instruction(String l, String op) {
 			this.label = l;
 			this.opcode = op;
-			if(!["add","sub","mul","div","lin","out","bnz"].contains(op)) throw new IOException("Opcode does not exist in SML");
 	}
 
 	// = the representation "label: opcode" of this Instruction
