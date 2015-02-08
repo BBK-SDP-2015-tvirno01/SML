@@ -2,6 +2,7 @@ package sml;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.Class;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,20 +83,19 @@ public class Translator {
 		int x;
 		String L2;
 
-		if (line.equals(""))
-			return null;
+		if (line.equals("")) return null;
 
 		String ins = scan();
 		
 		//use reflection to instantiate instruction subclass as indicated by the ins scanned which is then returned
 		try{
 			String insformat = "sml." + ins.substring(0,1).toUpperCase() + ins.substring(1).toLowerCase() + "Instruction";
-			Class c = Class.forName(insformat);
-			ArrayList<Object> params;
-			ArrayList<Class> ptypes;
+			Class<?> c = Class.forName(insformat);
+			ArrayList<Object> params = new ArrayList<Object>();
+			ArrayList<Class<?>> ptypes = new ArrayList<Class<?>>();
 			params.add(label);
 			ptypes.add(String.class);
-			String scn;
+			String scn = "";
 		
 			do{
 				try{
@@ -106,63 +106,77 @@ public class Translator {
 					params.add(scn);
 					ptypes.add(String.class);
 				}
-			}while(scn!="");
-		
-			Constructor cons = c.getConstructors(ptypes.toArray());
-			return (c) cons.newInstance(params.toArray());
+			}while(!line.equals(""));
+			
+			Class<?>[] ptypesA = new Class<?>[ptypes.size()];
+			Constructor<?> cons = c.getConstructor(ptypes.toArray(ptypesA));
+			Instruction result = (Instruction) cons.newInstance(params.toArray());
+			return result;
 		}catch(ClassNotFoundException ex){
 			System.out.println(ex.getMessage());
 			return null;
+		} catch (NoSuchMethodException ex) {
+			System.out.println(ex.getMessage());
+		} catch (SecurityException ex) {
+			System.out.println(ex.getMessage());
+		} catch (InstantiationException ex) {
+			System.out.println(ex.getMessage());
+		} catch (IllegalAccessException ex) {
+			System.out.println(ex.getMessage());
+		} catch (IllegalArgumentException ex) {
+			System.out.println(ex.getMessage());
+		} catch (InvocationTargetException ex) {
+			System.out.println(ex.getMessage());
 		}
 		
-		switch (ins) {
-		case "add":
-			r = scanInt();
-			s1 = scanInt();
-			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2)){
-				return new AddInstruction(label, r, s1, s2);
-			}
-		case "lin":
-			r = scanInt();
-			x = scanInt();
-			if(verifyInputRegisters(r)){
-				return new LinInstruction(label, r, x);
-			}
-		case "sub":
-			r = scanInt();
-			s1 = scanInt();
-			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2)){
-				return new SubInstruction(label, r, s1, s2);
-			}
-		case "mul":
-			r = scanInt();
-			s1 = scanInt();
-			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2)){
-				return new MulInstruction(label, r, s1, s2);
-			}
-		case "div":
-			r = scanInt();
-			s1 = scanInt();
-			s2 = scanInt();
-			if(verifyInputRegisters(r,s1,s2)){
-				return new DivInstruction(label, r, s1, s2);
-			}
-		case "out":
-			s1 = scanInt();
-			if(verifyInputRegisters(s1)){
-				return new OutInstruction(label, s1);
-			}
-		case "bnz":
-			s1 = scanInt();
-			L2 = scan();
-			if(verifyInputRegisters(s1)){
-				return new BnzInstruction(label, s1, L2);
-			}
-		}
-
+//		switch (ins) {
+//		case "add":
+//			r = scanInt();
+//			s1 = scanInt();
+//			s2 = scanInt();
+//			if(verifyInputRegisters(r,s1,s2)){
+//				return new AddInstruction(label, r, s1, s2);
+//			}
+//		case "lin":
+//			r = scanInt();
+//			x = scanInt();
+//			if(verifyInputRegisters(r)){
+//				return new LinInstruction(label, r, x);
+//			}
+//		case "sub":
+//			r = scanInt();
+//			s1 = scanInt();
+//			s2 = scanInt();
+//			if(verifyInputRegisters(r,s1,s2)){
+//				return new SubInstruction(label, r, s1, s2);
+//			}
+//		case "mul":
+//			r = scanInt();
+//			s1 = scanInt();
+//			s2 = scanInt();
+//			if(verifyInputRegisters(r,s1,s2)){
+//				return new MulInstruction(label, r, s1, s2);
+//			}
+//		case "div":
+//			r = scanInt();
+//			s1 = scanInt();
+//			s2 = scanInt();
+//			if(verifyInputRegisters(r,s1,s2)){
+//				return new DivInstruction(label, r, s1, s2);
+//			}
+//		case "out":
+//			s1 = scanInt();
+//			if(verifyInputRegisters(s1)){
+//				return new OutInstruction(label, s1);
+//			}
+//		case "bnz":
+//			s1 = scanInt();
+//			L2 = scan();
+//			if(verifyInputRegisters(s1)){
+//				return new BnzInstruction(label, s1, L2);
+//			}
+//		}
+		
 		return null;
 	}
 	
@@ -170,13 +184,13 @@ public class Translator {
 	 * Validate reigster number inputs
 	 * There are only 32 registers hence given register numbers should be <=31
 	 */
-	private static boolean verifyInputRegisters(int... inputs){
-		for(int i : inputs){
-		Registers r = new Registers();
-		if(i>r.getRegisters().length) return false;
-		}
-		return true;
-	}
+//	private static boolean verifyInputRegisters(int... inputs){
+//		for(int i : inputs){
+//		Registers r = new Registers();
+//		if(i>r.getRegisters().length) return false;
+//		}
+//		return true;
+//	}
 
 	/*
 	 * Return the first word of line and remove it from line. If there is no
