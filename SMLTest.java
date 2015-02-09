@@ -13,6 +13,7 @@ public class SMLTest {
 	@Before
 	public void testSetup() {
 		m = new Machine();
+		m.setRegisters(new Registers());
 		t = new Translator("code.sml");
 	}
 	
@@ -71,10 +72,10 @@ public class SMLTest {
 	public void testBnzInstruction() {
 		t.readAndTranslate(m.getLabels(),m.getProg());
 		LinInstruction l1 = new LinInstruction("f0",2,1);
-		BnzInstruction b = new BnzInstruction("f1",1,"f5");
+		BnzInstruction b = new BnzInstruction("f1",2,"f5");
 		l1.execute(m);
 		b.execute(m);
-		assertEquals(m.getPc(),5);	
+		assertEquals(5,m.getPc());	
 	}
 	
 	@Test
@@ -85,7 +86,7 @@ public class SMLTest {
 		OutInstruction o = new OutInstruction("f1",2);
 		l1.execute(m);
 		o.execute(m);
-		assertEquals("2",outContent.toString());
+		assertEquals("17",outContent.toString());
 	}
 	
 	@After
