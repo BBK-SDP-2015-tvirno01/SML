@@ -10,6 +10,8 @@ public class SMLTest {
 	Machine m;
 	Translator t;
 	
+	
+	//create instance of machine and translator for use in testing
 	@Before
 	public void testSetup() {
 		m = new Machine();
@@ -17,6 +19,7 @@ public class SMLTest {
 		t = new Translator("code.sml");
 	}
 	
+	//test of the 'lin' instruction 
 	@Test
 	public void testLinInstruction() {
 		LinInstruction l = new LinInstruction("f0",1,3);
@@ -24,6 +27,7 @@ public class SMLTest {
 		assertEquals(m.getRegisters().getRegister(1),3);
 	}
 	
+	//test of the 'add' instruction
 	@Test
 	public void testAddInstruction() {
 		LinInstruction l1 = new LinInstruction("f0",2,5);
@@ -35,6 +39,7 @@ public class SMLTest {
 		assertEquals(m.getRegisters().getRegister(1),26);
 	}
 	
+	//test of the 'sub' instruction
 	@Test
 	public void testSubInstruction() {
 		LinInstruction l1 = new LinInstruction("f0",2,21);
@@ -46,6 +51,7 @@ public class SMLTest {
 		assertEquals(m.getRegisters().getRegister(1),16);	
 	}
 	
+	//test of the 'mul' instruction
 	@Test
 	public void testMulInstruction() {
 		LinInstruction l1 = new LinInstruction("f0",2,3);
@@ -57,6 +63,8 @@ public class SMLTest {
 		assertEquals(m.getRegisters().getRegister(1),15);
 	}
 	
+	
+	//test of the 'div' instruction
 	@Test
 	public void testDivInstruction() {
 		LinInstruction l1 = new LinInstruction("f0",2,21);
@@ -68,6 +76,7 @@ public class SMLTest {
 		assertEquals(m.getRegisters().getRegister(1),7);	
 	}
 	
+	//test of the 'bnz' instruction
 	@Test
 	public void testBnzInstruction() {
 		t.readAndTranslate(m.getLabels(),m.getProg());
@@ -78,6 +87,7 @@ public class SMLTest {
 		assertEquals(5,m.getPc());	
 	}
 	
+	//test of the 'out' instruction
 	@Test
 	public void testOutInstruction() {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -89,6 +99,7 @@ public class SMLTest {
 		assertEquals("17",outContent.toString());
 	}
 	
+	//close machine and translator instances following test
 	@After
 	public void closeTestMachine() {
 		m = null;

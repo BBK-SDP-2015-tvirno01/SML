@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.Class;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -73,30 +74,34 @@ public class Translator {
 		return true;
 	}
 
-	// line should consist of an MML instruction, with its label already
+	// line should consist of an SML instruction, with its label already
 	// removed. Translate line into an instruction with label label
 	// and return the instruction
 	public Instruction getInstruction(String label) {
-		int s1; // Possible operands of the instruction
-		int s2;
-		int r;
-		int x;
-		String L2;
 
 		if (line.equals("")) return null;
 
 		String ins = scan();
 		
-		//use reflection to instantiate instruction subclass as indicated by the ins scanned which is then returned
+		//Use of reflection to instantiate instruction subclass, as indicated by the opcode scanned, which is then returned
 		try{
+			//Create instruction subclass name from the opcode scanned
+			//[Note: The format of the instruction subclass name must follow the standard convention of opcode with the first
+			//character capitalized, concatenated with the string 'Instruction']
 			String insformat = "sml." + ins.substring(0,1).toUpperCase() + ins.substring(1).toLowerCase() + "Instruction";
+			
+			//Select Instruction subclass using the formatted string
 			Class<?> c = Class.forName(insformat);
-			ArrayList<Object> params = new ArrayList<Object>();
-			ArrayList<Class<?>> ptypes = new ArrayList<Class<?>>();
+			
+			//Create List data structures to hold the class types and instances for the constructor parameters and add a first
+			//record for the label of the line of SML code being scanned 
+			List<Object> params = new ArrayList<Object>();
+			List<Class<?>> ptypes = new ArrayList<Class<?>>();
 			params.add(label);
 			ptypes.add(String.class);
+			
+			//read operands from the line of SML code in the current specification these can only be integers or strings 
 			String scn = "";
-		
 			do{
 				try{
 					scn = scan();
@@ -108,89 +113,107 @@ public class Translator {
 				}
 			}while(!line.equals(""));
 			
+			//Identify the constructor of class c from the signature of the parameters 
 			Class<?>[] ptypesA = new Class<?>[ptypes.size()];
 			Constructor<?> cons = c.getConstructor(ptypes.toArray(ptypesA));
+			
+			//create instance of class c and return
 			Instruction result = (Instruction) cons.newInstance(params.toArray());
 			return result;
+			
 		}catch(ClassNotFoundException ex){
 			System.out.println(ex.getMessage());
 			return null;
 		} catch (NoSuchMethodException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		} catch (SecurityException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		} catch (InstantiationException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		} catch (IllegalAccessException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		} catch (InvocationTargetException ex) {
 			System.out.println(ex.getMessage());
+			return null;
 		}
 		
-//		switch (ins) {
-//		case "add":
-//			r = scanInt();
-//			s1 = scanInt();
-//			s2 = scanInt();
-//			if(verifyInputRegisters(r,s1,s2)){
-//				return new AddInstruction(label, r, s1, s2);
-//			}
-//		case "lin":
-//			r = scanInt();
-//			x = scanInt();
-//			if(verifyInputRegisters(r)){
-//				return new LinInstruction(label, r, x);
-//			}
-//		case "sub":
-//			r = scanInt();
-//			s1 = scanInt();
-//			s2 = scanInt();
-//			if(verifyInputRegisters(r,s1,s2)){
-//				return new SubInstruction(label, r, s1, s2);
-//			}
-//		case "mul":
-//			r = scanInt();
-//			s1 = scanInt();
-//			s2 = scanInt();
-//			if(verifyInputRegisters(r,s1,s2)){
-//				return new MulInstruction(label, r, s1, s2);
-//			}
-//		case "div":
-//			r = scanInt();
-//			s1 = scanInt();
-//			s2 = scanInt();
-//			if(verifyInputRegisters(r,s1,s2)){
-//				return new DivInstruction(label, r, s1, s2);
-//			}
-//		case "out":
-//			s1 = scanInt();
-//			if(verifyInputRegisters(s1)){
-//				return new OutInstruction(label, s1);
-//			}
-//		case "bnz":
-//			s1 = scanInt();
-//			L2 = scan();
-//			if(verifyInputRegisters(s1)){
-//				return new BnzInstruction(label, s1, L2);
-//			}
-//		}
+		//The below section has been commented out. This contains the original switch statement used to test the Instruction sub classes 
 		
-		return null;
+		// Possible operands of the instruction
+		// int s1; 
+		// int s2;
+		// int r;
+		// int x;
+		// String L2;
+		
+		//		switch (ins) {
+		//		case "add":
+		//			r = scanInt();
+		//			s1 = scanInt();
+		//			s2 = scanInt();
+		//			if(verifyInputRegisters(r,s1,s2)){
+		//				return new AddInstruction(label, r, s1, s2);
+		//			}
+		//		case "lin":
+		//			r = scanInt();
+		//			x = scanInt();
+		//			if(verifyInputRegisters(r)){
+		//				return new LinInstruction(label, r, x);
+		//			}
+		//		case "sub":
+		//			r = scanInt();
+		//			s1 = scanInt();
+		//			s2 = scanInt();
+		//			if(verifyInputRegisters(r,s1,s2)){
+		//				return new SubInstruction(label, r, s1, s2);
+		//			}
+		//		case "mul":
+		//			r = scanInt();
+		//			s1 = scanInt();
+		//			s2 = scanInt();
+		//			if(verifyInputRegisters(r,s1,s2)){
+		//				return new MulInstruction(label, r, s1, s2);
+		//			}
+		//		case "div":
+		//			r = scanInt();
+		//			s1 = scanInt();
+		//			s2 = scanInt();
+		//			if(verifyInputRegisters(r,s1,s2)){
+		//				return new DivInstruction(label, r, s1, s2);
+		//			}
+		//		case "out":
+		//			s1 = scanInt();
+		//			if(verifyInputRegisters(s1)){
+		//				return new OutInstruction(label, s1);
+		//			}
+		//		case "bnz":
+		//			s1 = scanInt();
+		//			L2 = scan();
+		//			if(verifyInputRegisters(s1)){
+		//				return new BnzInstruction(label, s1, L2);
+		//			}
+		//		}	
+		//		return null;
 	}
 	
 	/*
 	 * Validate reigster number inputs
 	 * There are only 32 registers hence given register numbers should be <=31
 	 */
-//	private static boolean verifyInputRegisters(int... inputs){
-//		for(int i : inputs){
-//		Registers r = new Registers();
-//		if(i>r.getRegisters().length) return false;
-//		}
-//		return true;
-//	}
+	//	private static boolean verifyInputRegisters(int... inputs){
+	//		for(int i : inputs){
+	//		Registers r = new Registers();
+	//		if(i>r.getRegisters().length) return false;
+	//		}
+	//		return true;
+	//	}
 
 	/*
 	 * Return the first word of line and remove it from line. If there is no
