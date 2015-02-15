@@ -28,11 +28,14 @@ public class DivInstruction extends Instruction {
 	public void execute(Machine m) {
 		int value1 = m.getRegisters().getRegister(op1);
 		int value2 = m.getRegisters().getRegister(op2);
+		if(value2 == 0){
+			throw new IllegalArgumentException("Error at label" + this.label + "You cannot divide by 0");
+		}
 		m.getRegisters().setRegister(result, value1 / value2);
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + op1 + " / " + op2 + " to " + result;
+		return super.toString() + " register " + op1 + " / register " + op2 + " to register " + result;
 	}
 }
